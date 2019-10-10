@@ -1,0 +1,5 @@
+Timer queue is actually a priority queue implemented with a min heap.
+So, in accordance with the structure of a min-heap, the element with the min value always stays at the top and therefore every next element in the queue(every root element in the min heap) is the element with the min value.
+The value of each element in this timer-queue of event loop is the timestamp in milliseconds at which it expires. So for example, if you have set a timeout with the duration being 500 milliseconds, then the timestamp on that element , and thereby the value of that element in the timer queue would be the current time + 500. So, by design the timeouts closest to expiry would be at the start of the queue(top of the heap). 
+At the start of each timer phase, elements from the queue are dequeued and checked if the time now is greater than the expiry time of the element, and if it’s so then the timeout is executed.	
+SetInterval works in a similar manner in the sense that after each execution of it, a new element with a timestamp adding the next interval is added back to the queue.

@@ -52,21 +52,43 @@ setCustomFileIO('read', (err, data) => {
   setCustomImmediate(() => console.log('SET IMMEDIATE POST FILE READ'));
   setCustomTimeout(() => console.log('SET TIMEOUT POST FILE READ'));
 
-  Promise.resolve().then(() =>
+  Promise.resolve().then(() => {
     console.log(
       '\n[interrupt] [Promise-queue] Promise-1 resolved in file read callback'
     )
-  );
-  process.nextTick(() =>
-    console.log(
-      '\n[interrupt] [Process.nextTick-queue] Next tick from file read callback'
+
+    process.nextTick(() =>
+      console.log(
+        '\n[interrupt] [Process.nextTick-queue] Next tick from inside Promise-1'
+      )
     )
-  );
+
+    Promise.resolve().then(() => {
+      console.log(
+        '\n[interrupt] [Promise-queue] Promise-1-[2] resolved in file read callback'
+      )
+      process.nextTick(() =>
+        console.log(
+          '\n[interrupt] [Process.nextTick-queue] Next tick from inside Promise-1-[2]'
+        )
+      )
+    })
+
+  });
+
+
   Promise.resolve().then(() =>
     console.log(
       '\n[interrupt] [Promise-queue] Promise-2 resolved in file read callback'
     )
   );
+
+  process.nextTick(() =>
+    console.log(
+      '\n[interrupt] [Process.nextTick-queue] Next tick from file read callback'
+    )
+  );
+
   console.log(`  XY --Added to process.nextTick-queue and promise-queue`);
 
   encryptSync()
@@ -75,4 +97,31 @@ setCustomFileIO('read', (err, data) => {
 setCustomFileIO('write', (err, data) => {
   setCustomImmediate(() => console.log('SET IMMEDIATE POST FILE WRITE'));
   setCustomTimeout(() => console.log('SET TIMEOUT POST FILE WRITE'));
+});
+
+/* setCustomTimeout(() => {
+  console.log('  ENTER 1 LEVEL TIMEOUT');
+  setCustomTimeout(() => {
+    console.log('  ENTER 2 LEVEL TIMEOUT');
+    setCustomTimeout(() => {
+      console.log('  ENTER 3 LEVEL TIMEOUT');
+      setCustomTimeout();
+      console.log('  EXIT 3 LEVEL TIMEOUT');
+    });
+    console.log('  EXIT 2 LEVEL TIMEOUT');
+  });
+  console.log('  EXIT 1 LEVEL TIMEOUT');
+}); */
+
+setCustomImmediate(() => {
+  setCustomTimeout()
+  setCustomImmediate(() => {
+    setCustomTimeout()
+    setCustomImmediate(() => {
+      setCustomTimeout()
+      console.log('  EXIT 3 LEVEL IMMD');
+    });
+    console.log('  EXIT 2 LEVEL IMMD');
+  });
+  console.log('  EXIT 1 LEVEL IMMD');
 });

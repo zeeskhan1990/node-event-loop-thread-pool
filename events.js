@@ -38,6 +38,9 @@ server.on("close", () => {
   console.log("Server closed");
 });
 
+//This is a callback for opening a socket at a particular port & host, and the callback is executed when the port 
+//is successfully opened. It's similar to opening a file. This particular event emit->listen->callback path ends here.
+//Reading from a port (file) is a different event path.
 server.listen(8000, "127.0.0.1", () => {
   console.log("Waiting for requests...");
 });
